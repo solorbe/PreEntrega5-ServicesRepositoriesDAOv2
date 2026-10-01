@@ -13,10 +13,10 @@
 //     tests). El service no se entera del cambio.
 // ---------------------------------------------------------------------
 
-import { ServiceManager } from "../dao/services.dao.js";
+import { ServiceFsDao } from "../dao/services.dao.js";
 
 export class ServiceRepository {
-  constructor(dao = new ServiceManager()) {
+  constructor(dao = new ServiceFsDao()) {
     this.dao = dao;
   }
 

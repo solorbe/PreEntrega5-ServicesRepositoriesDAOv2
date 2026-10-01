@@ -12,17 +12,17 @@
 // ---------------------------------------------------------------------
 
 import fs from 'fs/promises';
+import { BookingRepository } from '../repositories/bookings.repository.js';
 
-const PATH = './src/data/bookings.json';
 
-export class BookingManager {
-
+export class BookingFsDao  {
+  PATH = './src/data/bookings.json';
   // Auxiliares privados de acceso al archivo (el # los hace privados: solo se llaman desde adentro de esta clase).
   // Lee el archivo completo y lo devuelve parseado como array.  
   // Si elarchivo no existe o tiene JSON inválido, devolvemos [] en vez de romper la app.
   async #read() {
     try {
-      const content = await fs.readFile(PATH, 'utf-8');
+      const content = await fs.readFile(this.PATH, 'utf-8');
       return JSON.parse(content);
     } catch (error) {
       return [];
@@ -32,13 +32,13 @@ export class BookingManager {
   // Recibe el array completo de reservas y lo escribe, reemplazando todo el contenido anterior. 
   // JSON.stringify (2) indenta el archivo para que sea legible al abrirlo a mano.
   async #write(bookings) {
-    await fs.writeFile(PATH, JSON.stringify(bookings, null, 2));
+    await fs.writeFile(this.PATH, JSON.stringify(bookings, null, 2));
   }
 
   
   // GET /api/bookings/:bid
   // Devuelve la reserva con ese id, o null si no existe (el controller decide qué status HTTP corresponde a ese null).
-  async getBookingById(id) {
+  async getById(id) {
     const bookings = await this.#read();
     const booking = bookings.find((b) => b.id === Number(id));
     return booking ?? null;
@@ -51,15 +51,7 @@ export class BookingManager {
     const maxId = bookings.reduce((max, b) => Math.max(max, b.id), 0);
     const newBooking = {
       id: maxId + 1,
-      // Si el cliente no manda "client", guardamos 'Anónimo'. El operador ?? usa el valor de la derecha solo si el de la izquierda es
-      // null o undefined.
-      client: data.client ?? 'Anónimo',
-      date: data.date ?? new Date().toISOString(),
-      // Toda reserva nace "pendiente"
-      status: 'pending',
-      // La reserva arranca SIN servicios; se agregan después con addServiceToBooking.
-      services: [],
-    };
+      ...data  };
     bookings.push(newBooking);
     await this.#write(bookings);
     return newBooking;
@@ -72,12 +64,12 @@ export class BookingManager {
   async updateBooking(id, data) {
     const bookings = await this.#read();
     const index = bookings.findIndex((b) => b.id === Number(id));
-
     if (index === -1) {
       return null;
     }
 
-    const updatedBooking = { ...bookings[index], ...data, id: bookings[index].id };
+    const updatedBooking = { ...bookings[index], ...data, 
+    id: bookings[index].id };
     bookings[index] = updatedBooking;
     await this.#write(bookings);
 

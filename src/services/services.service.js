@@ -1,10 +1,10 @@
 
-import { ServiceManager } from "../repositories/services.repository.js";
+import { serviceRepository } from "../repositories/services.repository.js";
 
 class ServicesService {
   constructor() {
     // El service es dueño de su manager: nadie más lo instancia.
-    this.serviceManager = new ServiceManager();
+    this.serviceRepository = serviceRepository;
   }
 
   // Devuelve la lista de servicios. 
@@ -12,7 +12,7 @@ class ServicesService {
   // el controller soloS pasa lo que vino en la query string, no filtra nada).
   async getServices(filtro = {}) {
     const { category, available } = filtro;
-    const servicios = await this.serviceManager.getServices();
+    const servicios = await this.serviceRepository.getAll();
     if (category) {
       return servicios.filter((servicio) => servicio.category === category);
     }
@@ -26,25 +26,25 @@ class ServicesService {
   // La decisión de "null -> 404" es del controller; 
   // acá informamos que el dominio "no existe".
   async getServiceById(id) {
-    return this.serviceManager.getServiceById(id);
+    return this.serviceRepository.getById(id);
   }
 
   // Crea un servicio. 
   // La validación de FORMATO del request (campos obligatorios) se queda en el controller porque es una regla del protocolo HTTP; acá asumimos que los datos ya vienen completos y solo orquestamos la persistencia.
   async createService(data) {
-    return this.serviceManager.addService(data);
+    return this.serviceRepository.create(data);
   }
 
   // Actualiza un servicio existente. 
   // Devuelve el servicio ya actualizado, o null si no existía.
   async updateService(id, data) {
-    return this.serviceManager.updateService(id, data);
+    return this.serviceRepository.update(id, data);
   }
 
   // Elimina un servicio. 
   // Devuelve el servicio eliminado, o null si no existía.
   async deleteService(id) {
-    return this.serviceManager.deleteService(id);
+    return this.serviceRepository.delete(id);
   }
 }
 

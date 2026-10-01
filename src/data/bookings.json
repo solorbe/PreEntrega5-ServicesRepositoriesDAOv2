@@ -8,6 +8,10 @@
       {
         "service": 1,
         "quantity": 1
+      },
+      {
+        "service": 4,
+        "quantity": 3
       }
     ]
   },
@@ -55,6 +59,30 @@
       {
         "service": 4,
         "quantity": 2
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "client": "Juana",
+    "date": "",
+    "status": "pending",
+    "services": [
+      {
+        "service": 4,
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "client": "Gustavo",
+    "date": "",
+    "status": "pending",
+    "services": [
+      {
+        "service": 4,
+        "quantity": 3
       }
     ]
   }
